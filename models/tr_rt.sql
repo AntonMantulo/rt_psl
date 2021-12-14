@@ -35,7 +35,7 @@ WHERE transactionstatus = 'Success'
   AND creditamount <> 0
   
 {% if is_incremental() %}
-        AND transactioncompleted in ({{ partitions_to_replace | join(',') }})
+        AND  DATE(transactioncompleted) >= CURRENT_DATE() -1
     {% endif %}
     
 UNION ALL
@@ -57,6 +57,6 @@ WHERE transactiontype = 'Agent2User'
       
       {% if is_incremental() %}
         -- recalculate yesterday + today
-        AND transactioncompleted in ({{ partitions_to_replace | join(',') }})
-        AND postingcompleted in ({{ partitions_to_replace | join(',') }})
+        AND DATE(transactioncompleted) >= CURRENT_DATE() -1
+        AND DATE(postingcompleted) >= CURRENT_DATE() -1
             {% endif %}
